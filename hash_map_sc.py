@@ -106,16 +106,17 @@ class HashMap:
         """
         Removes a given key and its associated value from the HashMap
         """
-        # hash = self.hash_function(key)
-        # index = hash % self.capacity
-        #
+
+        hash = self.hash_function(key)
+        index = hash % self.capacity
+
+        self.buckets[index].remove(key)
+
         # bucket = self.buckets[index]
         #
         # if bucket.contains(key):
         #     bucket.remove(key)
         #     self.size -= 1
-
-        pass
 
     def contains_key(self, key: str) -> bool:
         """
