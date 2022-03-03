@@ -111,6 +111,7 @@ class HashMap:
         index = hash % self.capacity
 
         self.buckets[index].remove(key)
+        self.size -= 1
 
         # bucket = self.buckets[index]
         #
