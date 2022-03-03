@@ -1,9 +1,9 @@
-# Name:
-# OSU Email:
+# Name: Lucas Jensen
+# OSU Email: jenseluc@oregonstate.edu
 # Course: CS261 - Data Structures
-# Assignment:
-# Due Date:
-# Description:
+# Assignment: 6 HashMap
+# Due Date: March 11, 2022
+# Description: Implementation of a HashMap data structure
 
 
 from a6_include import *
