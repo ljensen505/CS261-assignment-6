@@ -1,9 +1,9 @@
-# Name:
-# OSU Email:
+# Name: Lucas Jensen
+# OSU Email: jenseluc@oregonstate.edu
 # Course: CS261 - Data Structures
-# Assignment:
-# Due Date:
-# Description:
+# Assignment: 6 HashMap
+# Due Date: March 11, 2022
+# Description: Implementation of a HashMap data structure
 
 
 from a6_include import *
@@ -60,57 +60,135 @@ class HashMap:
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Clears the contents of the HashMap without changing its capacity
         """
-        pass
+        for i in range(self.capacity):
+            self.buckets[i].head = None
+
+        self.size = 0
 
     def get(self, key: str) -> object:
         """
         TODO: Write this implementation
         """
-        pass
+        hash = self.hash_function(key)
+        index = hash % self.capacity
+
+        bucket = self.buckets[index]
+        node = bucket.contains(key)
+
+        if node:
+            return node.value
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Updates the key : value pair in the hash map
         """
-        pass
+        # find the target index
+        hash = self.hash_function(key)
+        index = hash % self.capacity
+
+        bucket = self.buckets[index]
+
+        if bucket.contains(key):
+            # if the key already exists, replace its value with the new value
+            node = bucket.contains(key)
+            node.value = value
+        else:
+            # the key must not exist
+            bucket.insert(key, value)
+            self.size += 1
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Removes a given key and its associated value from the HashMap
         """
-        pass
+        hash = self.hash_function(key)
+        index = hash % self.capacity
+
+        bucket = self.buckets[index]
+
+        if bucket.contains(key):
+            bucket.remove(key)
 
     def contains_key(self, key: str) -> bool:
         """
-        TODO: Write this implementation
+        Determines if the HashMap contains a specified key
         """
-        pass
+        # an emtpy HashMap contains no keys, return False
+        if self.size == 0:
+            return False
+
+        # find the index of the key
+        hash = self.hash_function(key)
+        index = hash % self.capacity
+
+        if self.buckets[index].contains(key):
+            return True
+        else:
+            return False
 
     def empty_buckets(self) -> int:
         """
-        TODO: Write this implementation
+        Returns the number of empty buckets
         """
-        pass
+        count = 0
+
+        for i in range(self.capacity):
+            if self.buckets[i].head is None:
+                count += 1
+
+        return count
 
     def table_load(self) -> float:
         """
-        TODO: Write this implementation
+        Calculates and returns the current Hash Table load factor
         """
-        pass
+        # 𝝺=n/m
+        return self.size / self.capacity
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes the HashMap and rehashes everything along the way.
+        This is accomplished with a new DynamicArray.
         """
-        pass
+        if new_capacity < 1:
+            return
+
+        new_da = DynamicArray()
+
+        for i in range(self.capacity):
+            new_da.append(self.buckets[i])
+
+        # all old buckets now copied into new array
+        # reset self with new capacity and no data
+        self.buckets = DynamicArray()
+        for _ in range(new_capacity):
+            self.buckets.append(LinkedList())
+        self.capacity = new_capacity
+        self.size = 0
+
+        # iterate through new_da and add all the keys / values to self
+        for index in range(new_da.length()):
+            node = new_da[index].head
+            while node is not None:
+                self.put(node.key, node.value)
+                node = node.next
 
     def get_keys(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Builds and returns a DynamicArray containing all the keys in the HashMap
         """
-        pass
+        keys = DynamicArray()
+
+        # find the key of each node in each bucket, and append keys accordingly
+        for index in range(self.capacity):
+            node = self.buckets[index].head
+            while node is not None:
+                keys.append(node.key)
+                node = node.next
+
+        return keys
 
 
 # BASIC TESTING
