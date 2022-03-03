@@ -110,8 +110,8 @@ class HashMap:
         hash = self.hash_function(key)
         index = hash % self.capacity
 
-        self.buckets[index].remove(key)
-        self.size -= 1
+        if self.buckets[index].remove(key):
+            self.size -= 1
 
         # bucket = self.buckets[index]
         #
