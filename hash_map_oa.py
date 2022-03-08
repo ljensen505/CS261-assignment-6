@@ -168,9 +168,11 @@ class HashMap:
             j += 1
             if self.buckets[index] is None:
                 return False
+            elif self.buckets[index].is_tombstone:
+                continue
             elif self.buckets[index].key == key:
                 return True
-            # else, it must be a tombstone, so we continue searching
+
 
     def empty_buckets(self) -> int:
         """
