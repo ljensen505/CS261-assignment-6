@@ -104,7 +104,7 @@ class HashMap:
         while True:
             index = (initial + j ** 2) % self.capacity
             j += 1
-            # the key must exist
+            # the key must exist at this point
             if self.buckets[index].key == key:
                 return self.buckets[index].value
 
@@ -136,10 +136,10 @@ class HashMap:
         """
         Removes a given key and its associated value from the HashMap
         """
-        # quadratic probing required
         if not self.contains_key(key):
             return
 
+        # quadratic probing required
         hash = self.hash_function(key)
         initial = hash % self.capacity
 
@@ -174,7 +174,6 @@ class HashMap:
                 continue
             elif self.buckets[index].key == key:
                 return True
-
 
     def empty_buckets(self) -> int:
         """
