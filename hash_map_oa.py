@@ -86,6 +86,8 @@ class HashMap:
         for index in range(self.capacity):
             self.buckets[index] = None
 
+        self.size = 0
+
     def get(self, key: str) -> object:
         """
         Finds the value associated with a given key
