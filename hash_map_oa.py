@@ -149,6 +149,7 @@ class HashMap:
             j += 1
             if self.buckets[index].key == key:
                 self.buckets[index].is_tombstone = True
+                self.size -= 1
                 break
 
     def contains_key(self, key: str) -> bool:
