@@ -81,64 +81,151 @@ class HashMap:
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Clears the contents of the HashMap
         """
-        pass
+        for index in range(self.capacity):
+            self.buckets[index] = None
 
     def get(self, key: str) -> object:
         """
-        TODO: Write this implementation
+        Finds the value associated with a given key
         """
-        pass
+        if not self.contains_key(key):
+            return None
+
+        hash = self.hash_function(key)
+        initial = hash % self.capacity
+
+        j = 0
+        index = initial
+
+        while True:
+            index = (initial + j ** 2) % self.capacity
+            j += 1
+            # the key must exist
+            if self.buckets[index].key == key:
+                return self.buckets[index].value
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Updates a key : value pair in the HashMap.
         """
-        # remember, if the load factor is greater than 0.5,
-        # resize the table before putting the new key/value pair
-        #
-        # quadratic probing required
-        pass
+        if self.table_load() >= 0.5:
+            self.resize_table(self.capacity * 2)
+
+        hash = self.hash_function(key)
+        initial = hash % self.capacity
+
+        j = 0
+        index = initial
+
+        while True:
+            index = (initial + j**2) % self.capacity
+            j += 1
+            if self.buckets[index] is None or self.buckets[index].is_tombstone or self.buckets[index].key == key:
+                break
+
+        if not self.buckets[index]:
+            # only increment size if adding a new entry
+            self.size += 1
+        self.buckets[index] = HashEntry(key, value)
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Removes a given key and its associated value from the HashMap
         """
         # quadratic probing required
-        pass
+        if not self.contains_key(key):
+            return
+
+        hash = self.hash_function(key)
+        initial = hash % self.capacity
+
+        j = 0
+        index = initial
+
+        while True:
+            index = (initial + j ** 2) % self.capacity
+            j += 1
+            if self.buckets[index].key == key:
+                self.buckets[index].is_tombstone = True
+                break
 
     def contains_key(self, key: str) -> bool:
         """
-        TODO: Write this implementation
+        Determines of the given key is in the HashMap
         """
         # quadratic probing required
-        pass
+        hash = self.hash_function(key)
+        initial = hash % self.capacity
+
+        j = 0
+        index = initial
+
+        while True:
+            index = (initial + j**2) % self.capacity
+            j += 1
+            if self.buckets[index] is None:
+                return False
+            elif self.buckets[index].key == key:
+                return True
+            # else, it must be a tombstone, so we continue searching
 
     def empty_buckets(self) -> int:
         """
-        TODO: Write this implementation
+        Counts and returns the number of empty buckets
         """
-        pass
+        count = 0
+        for i in range(self.buckets.length()):
+            if self.buckets[i] is None or self.buckets[i].is_tombstone:
+                count += 1
+
+        return count
 
     def table_load(self) -> float:
         """
-        TODO: Write this implementation
+        Calculates and returns the table load
         """
-        pass
+        return self.size / self.capacity
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Changes the capacity of the internal DynamicArray. All key : values pairs remain and everything is rehashed
         """
         # remember to rehash non-deleted entries into new table
-        pass
+        if new_capacity < 1 or new_capacity < self.size:
+            return
+
+        # copy everything over to a new array
+        new_da = DynamicArray()
+        for i in range(self.capacity):
+            if self.buckets[i] and not self.buckets[i].is_tombstone:
+                new_da.append(self.buckets[i])
+
+        # reset self with a new array
+        self.buckets = DynamicArray()
+        for _ in range(new_capacity):
+            self.buckets.append(None)
+        self.capacity = new_capacity
+        self.size = 0
+
+        # iterate through new_da and rehash everything into self
+        for i in range(new_da.length()):
+            key = new_da[i].key
+            val = new_da[i].value
+            self.put(key, val)
 
     def get_keys(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Creates and returns a DynamicArray containing all keys in the HashMap
         """
-        pass
+        keys = DynamicArray()
+
+        for index in range(self.buckets.length()):
+            if self.buckets[index] is not None and not self.buckets[index].is_tombstone:
+                keys.append(self.buckets[index].key)
+
+        return keys
 
 
 if __name__ == "__main__":
@@ -279,7 +366,7 @@ if __name__ == "__main__":
     m.remove('key1')
     print(m.get('key1'))
     m.remove('key4')
-
+    #
     print("\nPDF - resize example 1")
     print("----------------------")
     m = HashMap(20, hash_function_1)
